@@ -1,3 +1,4 @@
+
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
@@ -73,5 +74,7 @@ int		ft_putchar_val(char c);
 int		ft_puthex_val(unsigned int n, int caps);
 int		ft_putunsig_val(int n);
 int		ft_putptr_val(unsigned long long n, int ft);
-char    *get_next_line(int fd);
+char	*get_next_line(int fd);
+int		ft_printf(const char *src, ...);
+int		ft_check_specifier(va_list    ap, char spec);
 #endif
