@@ -6,13 +6,32 @@
 /*   By: slampine <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 11:22:54 by slampine          #+#    #+#             */
-/*   Updated: 2023/02/24 11:22:55 by slampine         ###   ########.fr       */
+/*   Updated: 2023/02/27 10:05:00 by slampine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-void my_img_put(char specifier, int x, int y)
+int	read_map(int fd)
+{
+	char	*line;
+
+	steps = 0;
+	while (1)
+	{
+		line = get_next_line(fd);
+		if (!line)
+			break ;
+		if (line_len == 0)
+			line_len = ft_strlen(line);
+		map = ft_strjoin(map, line);
+		free(line);
+		steps++;
+	}
+	return (steps);
+}
+
+void	my_img_put(char specifier, int x, int y)
 {
 	if (specifier == '1')
 		mlx_put_image_to_window(mlx, win, wall, x, y);
@@ -25,7 +44,8 @@ void my_img_put(char specifier, int x, int y)
 	if (specifier == 'C')
 		mlx_put_image_to_window(mlx, win, collectible, x, y);
 }
-int create_images()
+
+int	create_images(void)
 {
 	wall = mlx_xpm_file_to_image(mlx, "open.xpm", &width, &height);
 	goal = mlx_xpm_file_to_image(mlx, "exit.xpm", &width, &height);
@@ -35,7 +55,8 @@ int create_images()
 	player = mlx_new_image(mlx, width, height);
 	return (0);
 }
-int create_map(void *mlx)
+
+int	create_map(void *mlx)
 {
 	int	win_width;
 	int	size_map;

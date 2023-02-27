@@ -6,12 +6,13 @@
 /*   By: slampine <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/22 13:21:25 by slampine          #+#    #+#             */
-/*   Updated: 2023/02/22 13:21:26 by slampine         ###   ########.fr       */
+/*   Updated: 2023/02/27 10:35:36 by slampine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
-int move_down(char *map)
+
+int	move_down(char *map)
 {
 	if (map[coord + line_len] == '0' || map[coord + line_len] == 'C')
 	{
@@ -33,7 +34,7 @@ int move_down(char *map)
 	return (0);
 }
 
-int move_up(char *map)
+int	move_up(char *map)
 {
 	if (map[coord - line_len] == '0' || map[coord - line_len] == 'C')
 	{
@@ -42,7 +43,7 @@ int move_up(char *map)
 		if (map[coord] == 'C')
 			col--;
 		if (ext == 0 && col == 0)
-				update_goal();
+			update_goal();
 		update_map(map, 1);
 		steps++;
 		return (1);
@@ -55,7 +56,7 @@ int move_up(char *map)
 	return (0);
 }
 
-int move_left(char *map)
+int	move_left(char *map)
 {
 	if (map[coord - 1] == '0' || map[coord - 1] == 'C')
 	{
@@ -77,7 +78,7 @@ int move_left(char *map)
 	return (0);
 }
 
-int move_right(char *map)
+int	move_right(char *map)
 {
 	if (map[coord + 1] == '0' || map[coord + 1] == 'C')
 	{
@@ -99,7 +100,7 @@ int move_right(char *map)
 	return (0);
 }
 
-int do_move(char *dir)
+int	do_move(char *dir)
 {
 	if (!ft_strncmp(dir, "up", ft_strlen(dir)))
 		return (move_up(map));

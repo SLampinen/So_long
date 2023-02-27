@@ -6,17 +6,18 @@
 /*   By: slampine <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 11:09:20 by slampine          #+#    #+#             */
-/*   Updated: 2023/02/23 11:09:22 by slampine         ###   ########.fr       */
+/*   Updated: 2023/02/27 10:48:08 by slampine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
-int update_goal()
+
+int	update_goal(void)
 {
 	int	x;
 	int	y;
-	int n;
-	
+	int	n;
+
 	y = 0;
 	n = 1;
 	x = ((coord_goal % line_len));
@@ -30,16 +31,16 @@ int update_goal()
 	return (0);
 }
 
-int update_map(char *map, int next)
+int	update_map(char *map, int next)
 {
 	int	x;
 	int	y;
-	int n;
+	int	n;
 
 	y = 0;
 	n = 1;
 	x = (coord % line_len);
-	while (coord > (n++ * line_len))
+	while (coord > ((n++) * line_len))
 		y++;
 	if (next == 0)
 	{
@@ -51,7 +52,7 @@ int update_map(char *map, int next)
 	{
 		map[coord] = 'P';
 		mlx_put_image_to_window(mlx, win, player, x * width, y * height);
-		printf("%i\n",steps);
+		ft_printf("%i\n", steps);
 		return (0);
 	}
 	return (0);
