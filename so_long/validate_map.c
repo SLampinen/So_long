@@ -12,117 +12,58 @@
 
 #include "so_long.h"
 
-int	find_path(char *map, int pos, int sum)
+int	check_rectangle(char **array, t_data *d)
 {
-	if (map[pos] == 'E')
-	{
-		map[pos] = '1';
-		coord_goal = pos;
-		return (sum + 1);
-	}
-	if (map[pos] == '0' || map[pos] == 'P' || map[pos] == 'C')
-	{
-		if (map[pos] == 'C')
-			sum++;
-		map[pos] = '1';
-		if (map[pos - 1] == 'E' || map[pos - 1] == 'C' || map[pos - 1] == '0')
-			sum = find_path(map, pos - 1, sum);
-		if (map[pos + 1] == 'E' || map[pos + 1] == 'C' || map[pos + 1] == '0')
-			sum = find_path(map, pos + 1, sum);
-		if (map[pos - line_len] == 'E' || map[pos - line_len] == 'C' \
-		|| map[pos - line_len] == '0')
-			sum = find_path(map, pos - line_len, sum);
-		if (map[pos + line_len] == 'E' || map[pos + line_len] == 'C' \
-		|| map[pos + line_len] == '0')
-			sum = find_path(map, pos + line_len, sum);
-	}
-	return (sum);
-}
+	int	len;
+	int	i;
 
-int	has_path(char *map, int line_amount, int line_len)
-{
-	coord = 0;
-	while (map[coord] != 'P')
-		coord++;
-	return (find_path(map, coord, 0));
-}
-
-int	check_borders(char **array)
-{
-	int	index;
-
-	index = 0;
-	while (index < line_len - 1)
+	i = 0;
+	len = ft_strlen(array[0]);
+	while (i < d->line_amount)
 	{
-		if (array[0][index] != '1')
+		if (len != ft_strlen(array[i]))
+		{
+			free(array);
+			ft_printf("Error\nMap is not rectangle\n");
 			return (0);
-		index++;
+		}
+		i++;
 	}
-	while (index > 0)
-	{
-		index--;
-		if (array[line_amount - 1][index] != '1')
-			return (0);
-	}
-	index = 0;
-	while (index < line_amount - 1)
-	{
-		if (array[index][0] != '1')
-			return (0);
-		if (array[index][line_len - 2] != '1')
-			return (0);
-		index++;
-	}
-	return (1);
-}
-
-int	count(void)
-{
-	int	index;
-	int	exits;
-	int	player;
-
-	index = 0;
-	col = 0;
-	player = 0;
-	exits = 0;
-	while (index < line_amount * line_len)
-	{
-		if (map[index] != '1' && map[index] != '0' && map[index] != 'C' \
-		&& map[index] != 'E' && map[index] != 'P' && map[index] != '\n')
-			return (0);
-		if (map[index] == 'C')
-			col++;
-		if (map[index] == 'P')
-			player++;
-		if (map[index] == 'E')
-			exits++;
-		index++;
-	}
-	if (col == 0 || exits != 1 || player != 1)
-		return (0);
-	return (1);
-}
-
-int	validate_map(char *map, int line_len, int line_amount)
-{
-	char	**array;
-
-	array = ft_split(map, '\n');
-	if (!check_borders(array))
+	if (!check_borders(d, array))
 	{
 		free(array);
+		ft_printf("Error\nMap is not bordered by walls\n");
 		return (0);
 	}
 	free(array);
-	if (!count())
-		return (0);
-	if ((has_path(map, line_amount, line_len)) != (col + 1))
-		ft_printf("No valid path\n");
-	else
+	return (1);
+}
+
+int	validate_map(char *map, t_data *d)
+{
+	char	**array;
+	int		res;
+
+	array = ft_split(map, '\n');
+	if (!check_rectangle(array, d))
 	{
-		ft_printf("map is valid\n");
-		return (1);
+		free(map);
+		return (0);
 	}
-	return (0);
+	res = count(d);
+	if (res == 0)
+	{
+		free(map);
+		ft_printf("Error\nMap contains illegal character\n");
+		return (0);
+	}
+	if (res == 1)
+	{
+		free(map);
+		ft_printf("Error\nShould have 1 exit, 1 player & 1+ collectibles\n");
+		return (0);
+	}
+	if (!(has_path(d, map, d->line_amount, d->line_len)))
+		return (0);
+	return (1);
 }

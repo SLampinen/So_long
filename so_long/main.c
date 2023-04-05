@@ -12,38 +12,43 @@
 
 #include "so_long.h"
 
-void	win_game(void *mlx)
+void	win_game(t_data *d)
 {
-	ft_printf("You completed game with %i moves\n", steps);
-	mlx_destroy_window(mlx, win);
-	free(map);
+	ft_printf("You completed game with %i moves\n", d->steps);
+	cleanup(d);
 	exit (0);
 }
 
-int	my_close(void *mlx)
+int	my_close(t_data *d)
 {
-	mlx_destroy_window(mlx, win);
-	free(map);
+	ft_printf("Game ended uncompleted\n");
+	cleanup(d);
 	exit (0);
 }
 
-int	keyhook(int keycode, void *mlx)
+int	key_hook(int keycode, t_data *d)
 {
 	if (keycode == 53)
-		my_close(mlx);
+		my_close(d);
 	if (keycode == 13 || keycode == 126 || keycode == 91)
-		(do_move("up"));
+		move_up(d->map, d);
 	if (keycode == 0 || keycode == 123 || keycode == 86)
-		(do_move("left"));
+		move_left(d->map, d);
 	if (keycode == 1 || keycode == 125 || keycode == 84)
-		(do_move("down"));
+		move_down(d->map, d);
 	if (keycode == 2 || keycode == 124 || keycode == 88)
-		(do_move("right"));
+		move_right(d->map, d);
 	return (0);
+}
+
+void	create_mlx(t_data *d)
+{
+	d->mlx = mlx_init();
 }
 
 int	main(int argc, char **argv)
 {
+	t_data	d;
 	char	*map_dup;
 	int		fd;
 
@@ -51,22 +56,19 @@ int	main(int argc, char **argv)
 		fd = open(argv[1], O_RDONLY);
 	else
 		return (0);
-	ext = 0;
-	line_len = 0;
-	map = "";
-	read_map(fd);
-	map_dup = ft_strjoin(map, "");
-	line_amount = steps;
-	if (!(validate_map(map_dup, line_len, line_amount)))
-	{
-		ft_printf("Error with map\n");
+	d.xcoord = 0;
+	d.ycoord = 0;
+	d.large = 0;
+	d.ext = 0;
+	d.line_len = 0;
+	d.map = "";
+	read_map(fd, &d);
+	map_dup = ft_strjoin(d.map, "");
+	if (!(validate_map(map_dup, &d)))
 		return (0);
-	}
-	free(map_dup);
-	mlx = mlx_init();
-	create_map(mlx);
-	steps = 1;
-	mlx_key_hook(win, keyhook, mlx);
-	mlx_hook(win, 17, 0, my_close, mlx);
-	mlx_loop(mlx);
+	create_map(&d);
+	d.steps = 1;
+	mlx_key_hook(d.win, key_hook, &d);
+	mlx_hook(d.win, 17, 0, my_close, &d);
+	mlx_loop(d.mlx);
 }

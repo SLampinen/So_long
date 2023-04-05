@@ -15,37 +15,56 @@
 # include "mlx.h"
 # include "./libft/libft.h"
 # include <fcntl.h>
-# include <stdio.h>
-# include <stdlib.h>
-void	*mlx;
-void	*win;
-void	*wall;
-void 	*goal;
-void	*goal_open;
-void	*empty;
-void	*collectible;
-void	*player;
-char	*map;
-int		steps; 
-int		width;
-int 	height;
-int		w_ind;
-int		h_ind;
-int		coord;
-int		coord_goal;
-int		line_len;
-int		line_amount;
-int		col;
-int		ext;
 
-int 	my_close(void *mlx);
-int 	keyhook(int keycode, void *mlx);
-int 	main(int argc, char **argv);
-int 	validate_map(char *map, int line_len, int line_amount);
-int 	do_move(char *dir);
-void	win_game(void *mlx);
-int		update_map(char *map, int next);
-int 	create_map(void *mlx_get_color_value);
-void 	my_img_put(char specifier, int x, int y);
-int 	update_goal();
+typedef struct s_data
+{
+	void	*mlx;
+	void	*win;
+	void	*wall;
+	void	*goal;
+	void	*goal_o;
+	void	*empty;
+	void	*collectible;
+	void	*player;
+	char	*map;
+	int		steps;
+	int		wid;
+	int		hei;
+	int		w_ind;
+	int		h_ind;
+	int		coord;
+	int		coord_goal;
+	int		line_len;
+	int		line_amount;
+	int		col;
+	int		ext;
+	int		xcoord;
+	int		ycoord;
+	int		large;
+	int		win_wid;
+	int		win_hei;
+}	t_data;
+
+int		my_close(t_data *data);
+int		key_hook(int keycode, t_data *data);
+int		main(int argc, char **argv);
+void	read_map(int fd, t_data *data);
+int		validate_map(char *map, t_data *data);
+int		check_rectangle(char **array, t_data *d);
+int		check_borders(t_data *d, char **array);
+int		find_path(t_data *d, char *map, int pos, int sum);
+int		has_path(t_data *d, char *map, int line_amount, int line_len);
+int		count(t_data *d);
+void	create_map(t_data *data);
+void	create_mlx(t_data *data);
+int		update_map(t_data *data, char *map, int next);
+void	my_img_put(t_data *data, char specifier, int x, int y);
+int		update_goal(t_data *data);
+int		move_right(char *map, t_data *d);
+int		move_down(char *map, t_data *d);
+int		move_left(char *map, t_data *d);
+int		move_up(char *map, t_data *d);
+void	win_game(t_data *data);
+int		cleanup(t_data *d);
+int update_zoom(t_data *d);
 #endif
