@@ -27,48 +27,70 @@ int	update_goal(t_data *d)
 		y++;
 		n++;
 	}
-	mlx_put_image_to_window(d->mlx, d->win, d->goal_o, x * d->wid, y * d->wid);
+	mlx_put_image_to_window(d->mlx, d->win, d->goal_o, x * d->img_wid, y * d->img_wid);
 	d->ext++;
 	return (0);
 }
 
-int update_zoom(t_data *d)
+char	pos_to_map(t_data *d, int win_x, int win_y, int win_size)
 {
-	int	size_win;
-	int	pos;
-	int win_pos;
+	char res;
+	int pos;
+	int	p_x;
+	int	p_y;
+	int dif_x;
+	int dif_y;
+	int	coordx;
+	int	coordy;
 
-	d->w_ind = 0;
-	d->h_ind = 0;
-	win_pos = 0;
-	pos = win_pos + d->coord - (d->win_hei / (2 * d->hei)) - d->line_len;
-	size_win = d->win_hei * d->win_wid / (64 * 64);
-	while (win_pos < size_win)
+	//ft_printf("win_x %i, win_y %i\n",win_x, win_y);
+	p_x = d->coord % d->line_len;
+	p_y = d->coord / d->line_len;
+	//ft_printf("p_x %i, p_y %i\n", p_x, p_y);
+	dif_x = win_x - p_x;
+	dif_y = win_y - p_y;
+	ft_printf("dif_x %i, dif_y %i\n",dif_x, dif_y);
+	coordx = p_x + dif_x;
+	coordy = p_y + dif_y;
+	pos = coordx + (coordy * d->line_len);
+	if (coordx < 0 || coordx >= d->line_len)
 	{
-		if (pos < 0 || pos > ft_strlen(d->map))
+		pos = 0;
+	}
+	if (coordy < 0 || coordy >= d->line_amount)
+	{
+		pos = 0;
+	}
+	//ft_printf("coordx %i, coordy %i\n",coordx, coordy);
+	//ft_printf("pos %i, map[pos] %c\n\n", pos, d->map[pos]);
+	res = d->map[pos];
+	return (res);
+}
+int	update_zoom(t_data *d)
+{
+	int	win_pos;
+	int	win_size;
+	int	win_x;
+	int	win_y;
+	char spec;
+
+	win_pos = 0;
+	win_y = 0;
+	win_x = 0;
+	win_size = d->win_hei * d->win_wid / (d->img_hei * d->img_wid);
+	while (win_pos < win_size)
+	{
+		spec = pos_to_map(d, win_x, win_y, win_size);
+		//ft_printf("spec %c, win_x %i, win_y %i\n", spec, win_x, win_y);
+		my_img_put(d, spec, win_x * d->img_wid, win_y * d->img_hei);
+		win_x++;
+		if (win_x >= d->win_wid / d->img_wid)
 		{
-			my_img_put(d, d->map[0], d->wid * d->w_ind, d->hei * d->h_ind);
-			ft_printf("win_pos is %i, pos is %i, map[0] is %c\n",win_pos, pos,d->map[0]);
-		}
-		else
-		{
-			my_img_put(d, d->map[pos], d->wid * d->w_ind, d->hei * d->h_ind);
-			ft_printf("win_pos is %i, pos is %i, map[pos] is %c\n",win_pos, pos,d->map[pos]);
-		}
-		pos++;
-		if (win_pos % (d->win_hei / d->hei) == 4)
-		{
-			pos = pos - (d->win_hei / d->hei) + d->line_len;
-		}
-		d->w_ind++;
-		if (d->w_ind > (d->line_len - 1))
-		{
-			d->w_ind = 0;
-			d->h_ind++;
+			win_x = 0;
+			win_y++;
 		}
 		win_pos++;
 	}
-	ft_printf("coord %i, win_hei %i, hei %i, line_len %i\n",d->coord,d->win_hei, d->hei, d->line_len);
 	d->large = 1;
 	return (0);
 }
@@ -81,6 +103,15 @@ int	update_map(t_data *d, char *map, int next)
 
 	y = 0;
 	n = 1;
+	if (d->large)
+	{
+		if (next == 0)
+			map[d->coord] = '0';
+		if (next == 1)
+			map[d->coord] = 'P';
+		update_zoom(d);
+		return (0);
+	}
 	x = (d->coord % d->line_len);
 	while (d->coord > ((n++) * d->line_len))
 		y++;
@@ -88,19 +119,15 @@ int	update_map(t_data *d, char *map, int next)
 	{
 		map[d->coord] = '0';
 		mlx_put_image_to_window(d->mlx, d->win, d->empty, \
-		x * d->wid, y * d->hei);
-		if (d->large)
-			update_zoom(d);
+		x * d->img_wid, y * d->img_hei);
 		return (0);
 	}
 	if (next == 1)
 	{
 		map[d->coord] = 'P';
 		mlx_put_image_to_window(d->mlx, d->win, d->player, \
-		x * d->wid, y * d->hei);
+		x * d->img_wid, y * d->img_hei);
 		ft_printf("%i\n", d->steps);
-		if (d->large)
-			update_zoom(d);
 		return (0);
 	}
 	return (0);
