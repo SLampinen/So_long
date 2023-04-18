@@ -28,8 +28,8 @@ typedef struct s_data
 	void	*player;
 	char	*map;
 	int		steps;
-	int		wid;
-	int		hei;
+	int		img_wid;
+	int		img_hei;
 	int		w_ind;
 	int		h_ind;
 	int		coord;
@@ -43,6 +43,8 @@ typedef struct s_data
 	int		large;
 	int		win_wid;
 	int		win_hei;
+	int		win_hei_max;
+	int		win_wid_max;
 }	t_data;
 
 int		my_close(t_data *data);
@@ -66,5 +68,5 @@ int		move_left(char *map, t_data *d);
 int		move_up(char *map, t_data *d);
 void	win_game(t_data *data);
 int		cleanup(t_data *d);
-int update_zoom(t_data *d);
+int		update_zoom(t_data *d);
 #endif

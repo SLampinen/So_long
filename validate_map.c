@@ -21,7 +21,7 @@ int	check_rectangle(char **array, t_data *d)
 	len = ft_strlen(array[0]);
 	while (i < d->line_amount)
 	{
-		if (len != ft_strlen(array[i]))
+		if (!array[i] || len != ft_strlen(array[i]))
 		{
 			free(array);
 			ft_printf("Error\nMap is not rectangle\n");
